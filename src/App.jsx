@@ -1,5 +1,6 @@
 import { useGeolocated } from "react-geolocated";
 import Weather from './Weather';
+import WeatherForcast from "./WeatherForcast";
 
 
 
@@ -19,7 +20,9 @@ import Weather from './Weather';
       <div>Geolocation is not enabled</div>
   ) : coords ? (
     <>
-      <Weather latitude={coords.latitude} longitude={coords.longitude} />
+      {/* <Weather latitude={coords.latitude} longitude={coords.longitude} /> */}
+      <div> <p> latitude: {coords.latitude} , longtitude = {coords.longitude}</p></div>
+      <WeatherForcast latitude={coords.latitude} longitude={coords.longitude}/>
       </>
 
   ) : (
