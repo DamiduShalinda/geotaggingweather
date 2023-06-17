@@ -2,8 +2,14 @@ import { useState , useEffect} from 'react'
 import axios from 'axios';
 
 function WeatherForcast( {latitude , longitude}) {
-    const [weatherData, setWeatherData] = useState([]);
-    
+    const [ weatherData , setWeatherData] = useState([
+        {
+            date : "",
+            temp: "",
+            weather: "",
+            icon: ""
+        }
+    ])
 
     const API_KEY = '3d4c4d964c2239b7841a1f0d5397c190';
 
@@ -12,28 +18,60 @@ function WeatherForcast( {latitude , longitude}) {
         try {
             const response = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`);
             const updatedWeatherData = [];
-         for (let i = 1; i < 10; i++) {
-             updatedWeatherData.push(response.data.list[i]);
+         for (let i = 0; i < response.data.list.length; i+=2) {
+             updatedWeatherData.push({
+                date: response.data.list[i].dt_txt,
+                temp: response.data.list[i].main.temp,
+                weather : response.data.list[i].weather[0].description,
+                icon : response.data.list[i].weather[0].icon,
             }
-            setWeatherData(updatedWeatherData);
-            console.log(response.data.list);
-            console.log(updatedWeatherData);
+
+             );
+            }
+            setWeatherData(updatedWeatherData)
 
         } catch (error) {
             console.log(error);
         }
-
+    }
     useEffect(() => {
-        if (latitude && longitude) {
-            getWeatherForcast(latitude, longitude)
-        }
+        
+        getWeatherForcast(latitude , longitude)
 
-      }, [latitude, longitude ])
+      }, [])
+
+     useEffect(() => {
+      
+        console.log(weatherData)
+
+     }, [weatherData])
+      
     
 
   return (
-    <div>WeatherForcast</div>
+    <>
+
+    <table style={{ border: '2px solid black', width: '50%', maxWidth: '75vw' ,   }}>
+        <tr style={{ border: '1px solid black'}}>
+        <th style={{ border: '1px solid black' , padding : '2px'}}> Date and Time</th>
+        <th style={{ border: '1px solid black' , padding : '2px'}}> Temp</th>
+        <th style={{ border: '1px solid black' , padding : '2px'}}> Weather</th>
+        <th style={{ border: '1px solid black' , padding : '2px'}}> icon</th>
+        </tr>
+       { weatherData.map((data , index) => (
+        <tr key={index} style={{ border: '1px solid black'}}>
+            <td style={{ border: '1px solid black' , padding : '2px' }}>{data.date}</td>
+            <td style={{ border: '1px solid black' , padding : '2px'}}>{data.temp}</td>
+            <td style={{ border: '1px solid black' , padding : '2px'}}>{data.weather}</td>
+            <td style={{ border: '1px solid black' , padding : '2px'}}>
+            <img src={`https://openweathermap.org/img/w/${data.icon}.png`} alt="Weather Icon" />
+            </td>
+        </tr>
+
+       ))}
+    </table>
+
+    </>
   )
-}
 }
 export default WeatherForcast
